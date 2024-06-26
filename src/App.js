@@ -8,6 +8,7 @@ import {
 
 // imporing Scences
 import {RootLayout, ChatBoard, Home } from './scences/main';
+import { UserLogedProvider } from "./context/UserLogedContext";
 
 
 
@@ -23,7 +24,9 @@ function App() {
 
   return (
     <>
+    <UserLogedProvider>
     <RouterProvider router={router} />
+    </UserLogedProvider>
     </>
   );
 }
