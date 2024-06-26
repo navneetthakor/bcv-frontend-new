@@ -1,9 +1,10 @@
+
 import React from 'react'
 
 export default function Navbar() {
   return (
-    <div className='bg-gray-500'>
-      Navbar
+    <div className='border-red-700 border-2 sm:h-[10vh]'>
+      
     </div>
   )
 }

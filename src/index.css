@@ -3,6 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root{
+  --primary-color: '#4B70F5',
+  --secondary-color: '#4C3BCF'
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -16,5 +21,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
 
 
