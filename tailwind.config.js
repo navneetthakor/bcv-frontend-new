@@ -23,7 +23,7 @@ module.exports = {
           "secondary": "#4C3BCF",      /* Your secondary color */
           "accent": "#F5F5F6",         /* Your accent color */
           "neutral": "#3d4451",        /* Your neutral color */
-          "base-100": "#E1E2E1",       /* Background color */
+          "base-100": "#FFFFFF",       /* Background color */
           "info": "#3abff8",
           "success": "#36d399",
           "warning": "#fbbd23",
