@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UserLogedContext } from "../../context/UserLogedContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import bgimage from "../../assets/home_bg.jpg";
 
 export default function Navbar() {
   // to chanck whether user login state changes or not
@@ -18,6 +17,16 @@ export default function Navbar() {
   const [user, setUser] = useState({
     image: "",
   });
+
+  // login click 
+  const handleLoginClick = () =>{
+    if(localStorage.getItem('usertoken')){
+      navigate('/result');
+    }
+    else{
+      navigate('/login')
+    }
+  }
 
   // to get user data
   useEffect(() => {
@@ -99,7 +108,7 @@ export default function Navbar() {
             </div>
           </div>
         ) : (
-          <button className="h-[70%] w-[50%] z-10 btn text-white bg-gradient-to-r from-cyan-500 to-blue-500 text-[1.2rem]">
+          <button onClick={handleLoginClick} className="h-[70%] w-[50%] z-10 btn text-white bg-gradient-to-r from-cyan-500 to-blue-500 text-[1.2rem]">
             Login
           </button>
         )}

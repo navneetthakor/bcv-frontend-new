@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ChatBoard() {
+  // for navigation 
+  const navigate = useNavigate();
+
+  // if user not logged in 
+  // useEffect(()=>{
+  //   if(!localStorage.getItem('usertoken')){
+  //     navigate('/login')
+  //   }
+  // })
   return (
     <div className="w-[100%] h-[95vh] flex justify-center items-center relative z-1">
       <div

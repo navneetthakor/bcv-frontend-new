@@ -8,6 +8,7 @@ import {
 
 // imporing Scences
 import {RootLayout, ChatBoard, Home } from './scences/main';
+import {Login} from './components/login/main'
 import { UserLogedProvider } from "./context/UserLogedContext";
 
 
@@ -19,6 +20,7 @@ function App() {
     <Route exact path="/" element={<RootLayout />}>
       <Route index element={<Home />} />
       <Route exact path="/result" element={< ChatBoard />} />
+      <Route exact path="/login" element={<Login />} />
     </Route>)
   );
 
