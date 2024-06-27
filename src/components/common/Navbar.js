@@ -46,7 +46,7 @@ export default function Navbar() {
   // navigation buttons
   const navButtons = (txt) => {
     return (
-      <button className="decoration-0 hover:border-b-indigo-500 border-2 text-lg font-bold active:text-sm">
+      <button className="border-transparent hover:border-b-indigo-500 border-2 text-lg font-bold active:text-sm">
         {txt}
       </button>
     );
@@ -56,7 +56,7 @@ export default function Navbar() {
   const navLabels = ["Home", "How to use", "Help"];
 
   return (
-    <div className=" relative sm:h-[10vh] flex flex-row justify-between items-center px-[5vw]  z-50">
+    <div className=" relative sm:h-[12vh]  flex flex-row justify-between items-center px-[5vw] pt-2 z-50">
             
 
       {/* logo division  */}
@@ -67,9 +67,28 @@ export default function Navbar() {
         {navLabels?.map((labal) => navButtons(labal))}
       </div>
 
-      {/* login button  */}
-      <div className="h-[70%] sm:w-[12%]">
+      {/* login button  or avtar */}
+      <div className="h-[100%] sm:w-[20%]  overflow-hidden">
+      {pathIncludesResult ? 
+      <div className="flex flex-row gap-3 items-center">
+
+        <div class="avatar indicator">
+        <span class="indicator-item indicator-bottom badge badge-primary"></span>
+        <div class="w-15 h-[55px] rounded-xl">
+          <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"/>
+        </div>
+      </div>
+
+      <div>
+        <div className="text-lg">Rohanshu </div>
+        <div className="text-bold">rb@contractify.com </div>
+        </div>
+        <div className="text-lg"> &#x27A4; </div>
+      </div>
+      :
+      
         <button className="h-[100%] w-[100%] z-10 btn text-white bg-gradient-to-r from-cyan-500 to-blue-500 text-[1.2rem]">Login</button>
+      }
       </div>
     </div>
   );

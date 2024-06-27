@@ -18,7 +18,7 @@ function App() {
     createRoutesFromElements(
     <Route exact path="/" element={<RootLayout />}>
       <Route index element={<Home />} />
-      <Route exact path="/chatboard" element={< ChatBoard />} />
+      <Route exact path="/result" element={< ChatBoard />} />
     </Route>)
   );
 
