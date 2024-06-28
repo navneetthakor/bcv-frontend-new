@@ -5,12 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { UserLogedContext } from "../../context/UserLogedContext";
 
 export default function Login() {
-
-    // to chanck whether user login state changes or not
+  // to chanck whether user login state changes or not
   const { isUserLoged, setIsUserLoged } = useContext(UserLogedContext);
-    // for navigation 
-    const navigate = useNavigate();
-
+  // for navigation
+  const navigate = useNavigate();
 
   // schema for formik form
   const userFormSchema = yup.object().shape({
@@ -60,21 +58,20 @@ export default function Login() {
 
     if (data.signal === "red") alert(data.error);
     else {
-        console.log(data.usertoken);
+      console.log(data.usertoken);
       localStorage.setItem("usertoken", data.usertoken);
       setIsUserLoged(true);
-      navigate('/result');
+      navigate("/result");
     }
   };
 
-
-  
   // to toggle login and signup
   const handleLoginSignupToggle = () => {
     if (loginSignupState === "signup") setLoginSignupState("login");
     else setLoginSignupState("signup");
   };
 
+  // formik form -------------
   const formik = (
     <Formik
       initialValues={{
@@ -98,15 +95,19 @@ export default function Login() {
         isSubmitting,
         /* and other goodies */
       }) => (
-        <form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
           <div
-            style={{ display: 'flex', flexDirection: "column", gap: "10px", height: "65vh", width: '100%'}}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              height: "75vh",
+              width: "40vw",
+            }}
+            className="border-2 border-gray-200 shadow-lg shadow-blue-500/50 rounded-md items-center justify-center"
           >
             <button
-              style={{
-                color: "skyblue",
-                ":hover": { textDecoration: "underline" },
-              }}
+              className="text-blue-500 hover:text-blue-600 hover:decoration-solid hover:underline"
               onClick={handleLoginSignupToggle}
             >
               Click here to{" "}
@@ -115,16 +116,20 @@ export default function Login() {
             {loginSignupState === "signup" && (
               <div
                 style={{
-                  width: 110,
-                  height: 110,
+                  width: 100,
+                  height: 100,
                   cursor: "pointer",
                 }}
-                className=""
+                className="border-2 border-gray-300 rounded-lg overflow-hidden"
                 onClick={() => document.getElementById("image").click()}
               >
                 {selectedImage && (
-                  <div
-                    style={{width: '100px', height: '100px'}}
+                  <img
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      overflow: "hidden",
+                    }}
                     src={URL.createObjectURL(selectedImage)}
                     alt="uploaded img"
                   />
@@ -145,10 +150,9 @@ export default function Login() {
             />
 
             {loginSignupState === "signup" && (
-              <div width={'100%'}>
-                <textarea
-                  sx={{ width: '100%' }}
-                  variant="standard"
+              <div width={"100%"}>
+                <input
+                  className="rounded-md p-1 w-[20vw] active:border-gray-400 border-gray-300 border-[1px]"
                   label="userName"
                   type="txt"
                   name="username"
@@ -158,14 +162,14 @@ export default function Login() {
                   value={values.username}
                 />
                 {values.username === "" && touched.username && (
-                  <div>username required </div>
+                  <div className="text-red-800"> username required </div>
                 )}
               </div>
             )}
 
-            <div width={'100%'}>
-              <textarea
-                sx={{ width: '100%' }}
+            <div width={"100%"}>
+              <input
+                className="rounded-md p-1 w-[20vw] active:border-gray-400 border-gray-300 border-[1px]"
                 variant="standard"
                 label="email"
                 type="email"
@@ -175,14 +179,12 @@ export default function Login() {
                 onBlur={handleBlur}
                 value={values.email}
               />
-              {errors.email && touched.email && (
-                <div>{errors.email} </div>
-              )}
+              {errors.email && touched.email && <div>{errors.email} </div>}
             </div>
             {loginSignupState === "signup" && (
-              <div width={'100%'}>
-                <textarea
-                  sx={{ width: '100%' }}
+              <div width={"100%"}>
+                <input
+                  className="rounded-md p-1 w-[20vw] active:border-gray-400 border-gray-300 border-[1px]"
                   variant="standard"
                   label="Contact Number"
                   type="txt"
@@ -193,13 +195,13 @@ export default function Login() {
                   value={values.contact_num}
                 />
                 {errors.contact_num && touched.contact_num && (
-                  <div>{errors.contact_num} </div>
+                  <div className="text-red-800">{errors.contact_num} </div>
                 )}
               </div>
             )}
-            <div width={'100%'}>
-              <textarea
-                sx={{ width: '100%' }}
+            <div width={"100%"}>
+              <input
+                className="rounded-md p-1 w-[20vw] active:border-gray-400 border-gray-300 border-[1px]"
                 variant="standard"
                 label="Password"
                 type="txt"
@@ -214,46 +216,45 @@ export default function Login() {
               )}
             </div>
             <button
-              sx={{
-                background: 'linear-gradient(to right, #805af5, #cd99ff)',
-                marginTop: '5vh',
-                width: '40%'
-            }}
+              className=" mt-5 border hover:bg-blue-600 bg-blue-500 w-[20vw] h-[7vh] shadow-blue-500 border-none shadow-lg flex items-center justify-center text-white font-bold rounded-lg cursor-pointer"
               variant="contained"
               type="submit"
               onClick={handleSubmit}
             >
-              <div variant="h5" sx={{fontWeight: '700', color: 'white'}} > Submit</div>
+              <div variant="h5" sx={{ fontWeight: "700", color: "white" }}>
+                {" "}
+                Submit
+              </div>
             </button>
           </div>
-        </form>
+        </Form>
       )}
     </Formik>
   );
-  
-  // to check weather user already logged or not 
-  useEffect(()=>{
-    if(localStorage.getItem('usertoken')) navigate('/result');  
-  },[])
 
-   return (
-  <div
-  style={{
-    position: 'relative',
-    zIndex: '100',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop:'8vh',
-  }}
-  >
+  // to check weather user already logged or not
+  useEffect(() => {
+    if (localStorage.getItem("usertoken")) navigate("/result");
+  }, []);
+
+  return (
     <div
-    sx={{
-        width: '30%',
-    }}
+      style={{
+        position: "relative",
+        zIndex: "100",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingTop: "8vh",
+      }}
     >
+      <div
+        sx={{
+          width: "30%",
+        }}
+      >
         {formik}
+      </div>
     </div>
-  </div>
   );
 }

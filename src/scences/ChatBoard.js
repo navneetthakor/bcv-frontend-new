@@ -18,7 +18,7 @@ export default function ChatBoard() {
           background: "rgba(255,255,255,0.4)",
           backdropFilter: "blur(8px)",
         }}
-        class="rounded-lg shadow-xl border-blue-300/50 border-t-2 shadow-blue-500/50 h-[80vh] w-[70vw] p-2 pt-5"
+        class="rounded-lg shadow-xl border-2 border-gray-200 shadow-blue-500/50 h-[80vh] w-[70vw] p-2 pt-5"
       >
         {/* inital text by ai  */}
         <div className="chat chat-start">
@@ -54,7 +54,7 @@ export default function ChatBoard() {
           <h3 className="font-bold text-lg">Select Method</h3>
             <ul className="menu  bg-base-200 rounded-box w-[100%] mt-2">
               <li>
-                <details open>
+                <details open >
                   <summary>Master Template</summary>
                   <ul>
                     <li >
@@ -70,11 +70,11 @@ export default function ChatBoard() {
                 </details>
               </li>
               <li>
-                <details open>
+                <details>
                   <summary>Company Template</summary>
                   <ul>
                     <li>
-                      <details open>
+                      <details >
                         <summary>Amazon</summary>
                         <ul>
                           <li>
@@ -87,7 +87,7 @@ export default function ChatBoard() {
                       </details>
                     </li>
                     <li>
-                      <details open>
+                      <details >
                         <summary>Google</summary>
                         <ul>
                           <li>
