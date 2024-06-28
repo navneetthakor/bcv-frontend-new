@@ -6,11 +6,13 @@ export default function ChatBoard() {
   const navigate = useNavigate();
 
   // if user not logged in 
-  // useEffect(()=>{
-  //   if(!localStorage.getItem('usertoken')){
-  //     navigate('/login')
-  //   }
-  // })
+  useEffect(()=>{
+    if(!localStorage.getItem('usertoken')){
+      navigate('/login')
+    }
+  })
+
+  // actual returning data ---------
   return (
     <div className="w-[100%] h-[95vh] flex justify-center items-center relative z-1">
       <div

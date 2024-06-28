@@ -3,6 +3,7 @@ import { Form, Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { UserLogedContext } from "../../context/UserLogedContext";
+import avtar from "../../assets/avtar.jpeg"
 
 export default function Login() {
   // to chanck whether user login state changes or not
@@ -25,6 +26,7 @@ export default function Login() {
 
   // to handle form submit
   const handleFormSubmit = async (values) => {
+    console.log("hello")
     let url = `${process.env.REACT_APP_BACKEND_IP}/user/`;
     url += loginSignupState === "signup" ? `createuser` : `userlogin`;
     let data;
@@ -82,6 +84,7 @@ export default function Login() {
       }}
       validationSchema={userFormSchema}
       onSubmit={(values) => {
+        console.log('onsubmit');
         handleFormSubmit(values);
       }}
     >
@@ -106,13 +109,6 @@ export default function Login() {
             }}
             className="border-2 border-gray-200 shadow-lg shadow-blue-500/50 rounded-md items-center justify-center"
           >
-            <button
-              className="text-blue-500 hover:text-blue-600 hover:decoration-solid hover:underline"
-              onClick={handleLoginSignupToggle}
-            >
-              Click here to{" "}
-              {loginSignupState === "signup" ? "Login" : "Sign-Up"}
-            </button>
             {loginSignupState === "signup" && (
               <div
                 style={{
@@ -123,7 +119,7 @@ export default function Login() {
                 className="border-2 border-gray-300 rounded-lg overflow-hidden"
                 onClick={() => document.getElementById("image").click()}
               >
-                {selectedImage && (
+                {selectedImage ? (
                   <img
                     style={{
                       width: "100px",
@@ -131,6 +127,17 @@ export default function Login() {
                       overflow: "hidden",
                     }}
                     src={URL.createObjectURL(selectedImage)}
+                    alt="uploaded img"
+                  />
+                ) :
+                (
+                  <img
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      overflow: "hidden",
+                    }}
+                    src={avtar}
                     alt="uploaded img"
                   />
                 )}
@@ -157,11 +164,12 @@ export default function Login() {
                   type="txt"
                   name="username"
                   id="username"
+                  placeholder="User Name (*)"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.username}
                 />
-                {values.username === "" && touched.username && (
+                {!values.username && touched.username && (
                   <div className="text-red-800"> username required </div>
                 )}
               </div>
@@ -174,12 +182,13 @@ export default function Login() {
                 label="email"
                 type="email"
                 name="email"
+                placeholder="Email (*)"
                 id="email"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.email}
               />
-              {errors.email && touched.email && <div>{errors.email} </div>}
+              {errors.email && touched.email && <div className="text-red-800">{errors.email} </div>}
             </div>
             {loginSignupState === "signup" && (
               <div width={"100%"}>
@@ -190,6 +199,7 @@ export default function Login() {
                   type="txt"
                   name="contact_num"
                   id="contact_num"
+                  placeholder="Contact Number"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.contact_num}
@@ -207,12 +217,13 @@ export default function Login() {
                 type="txt"
                 name="password"
                 id="password"
+                placeholder="Password (*)"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.password}
               />
-              {errors.contact_num && touched.contact_num && (
-                <div>{errors.contact_num} </div>
+              {errors.password && touched.password && (
+                <div className="text-red-800">{errors.password} </div>
               )}
             </div>
             <button
@@ -221,10 +232,7 @@ export default function Login() {
               type="submit"
               onClick={handleSubmit}
             >
-              <div variant="h5" sx={{ fontWeight: "700", color: "white" }}>
-                {" "}
                 Submit
-              </div>
             </button>
           </div>
         </Form>
@@ -243,6 +251,7 @@ export default function Login() {
         position: "relative",
         zIndex: "100",
         display: "flex",
+        flexDirection: 'column',
         alignItems: "center",
         justifyContent: "center",
         paddingTop: "8vh",
@@ -253,6 +262,13 @@ export default function Login() {
           width: "30%",
         }}
       >
+        <button
+              className="font-bold text-blue-500 hover:text-blue-600 hover:decoration-solid hover:underline"
+              onClick={handleLoginSignupToggle}
+            >
+              Click here to{" "}
+              {loginSignupState === "signup" ? "Login" : "Sign-Up"}
+            </button>
         {formik}
       </div>
     </div>

@@ -2,6 +2,8 @@ import React from "react";
 import Navbar from "../components/common/Navbar";
 import { Outlet } from "react-router-dom";
 import bgimage from "../assets/home_bg.jpg"
+import bgimage2 from "../assets//lightBackground2.jpg"
+// import bgimage2 from "../assets//lightBackground.jpg"
 
 export default function RootLayout() {
   return (

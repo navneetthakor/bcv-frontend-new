@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UserLogedContext } from "../../context/UserLogedContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/CONTRACTIFY-1.png"
+import avtar from "../../assets/avtar.jpeg"
 
 export default function Navbar() {
   // to chanck whether user login state changes or not
@@ -55,7 +57,7 @@ export default function Navbar() {
   // navigation buttons
   const navButtons = (txt) => {
     return (
-      <button className="border-transparent hover:border-b-indigo-500 border-2 text-lg font-medium active:text-sm">
+      <button onClick={() => navigate('/')} className="border-transparent hover:border-b-indigo-500 border-2 text-lg font-medium active:text-sm">
         {txt}
       </button>
     );
@@ -73,7 +75,9 @@ export default function Navbar() {
   return (
     <div className=" relative z-[1000] top-0 left-0 sm:h-[11.5vh] border-gray-300 border-b-2 rounded-lg  flex flex-row justify-between items-center px-[5vw] pt-1">
       {/* logo division  */}
-      <div className="h-[80%] border-red-800 border-2 sm:w-[15%]">logo</div>
+      <div className="h-[70%] sm:w-[15%]">
+        <img style={{width: '100%', height: '100%'}} src={logo} alt='logo' />
+      </div>
 
       {/* navigation  */}
       <div className="flex flex-row gap-5">
@@ -91,12 +95,12 @@ export default function Navbar() {
             <div class="avatar indicator">
               <span class="indicator-item indicator-bottom badge badge-primary size-4"></span>
               <div class="w-15 h-[55px] rounded-xl border-gray-300 border-2">
-                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+               {!user.image ? <img src={avtar} /> : <img src={`${process.env.REACT_APP_BACKEND_IP}/${user.image}`} alt='user image' className="w-[100%] h-[100%]" /> }
               </div>
             </div>
             <div>
-              <div className="text-lg text-blue-500 drop-shadow-lg shadow-blue-500/50 ">Rohanshu </div>
-              <div className="text-bold">rb@contractify.com </div>
+              <div className=" text-lg text-blue-500 drop-shadow-lg shadow-blue-500/50 truncate">{user.username} </div>
+              <div className="w-[80%] text-bold truncate">{user.email} </div>
             </div>
             <div id="rightarr" className="text-lg ">
               {" "}
