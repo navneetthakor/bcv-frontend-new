@@ -1,8 +1,5 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { CiChat1 } from "react-icons/ci";
-import { GoHistory } from "react-icons/go";
-import { IoSettingsOutline } from "react-icons/io5";
 
 export default function ChatBoard() {
   // for navigation
@@ -17,32 +14,36 @@ export default function ChatBoard() {
 
   // actual returning data ---------
   return (
-    <div className="w-[100%] h-[88vh] flex justify-around relative z-1 pt-5 overflow-y-clip">
-      {/* sidebar */}
-      <ul className="menu bg-base-200 rounded-box w-[15vw] h-[22vh] bg-transparent shadow-lg border-[1px] border-gray-500 shadow-blue-500/50 pt-5">
-        <li>
-          <a className="bg-blue-500 text-white">
-          <CiChat1 size={20} color="white"/>
-          Chat Board
-          </a>
-        </li>
-        <li
-        onClick={() => document.getElementById("my_modal_2").showModal()}
-        >
-          <a>
-          <GoHistory size={20}/>
-            History
-          </a>
-        </li>
-        <li
-        onClick={() => document.getElementById("my_modal_1").showModal()}
-        >
-          <a>
-          <IoSettingsOutline size={20}/>
-            Settings
-          </a>
-        </li>
-      </ul>
+    <div className="w-[100%] h-[95vh] flex justify-center items-center relative z-1">
+      {/* sidebar  */}
+      <div className="drawer lg:drawer-open">
+        <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content flex flex-col items-center justify-center">
+          {/* Page content here */}
+          <label
+            htmlFor="my-drawer-2"
+            className="btn btn-primary drawer-button lg:hidden"
+          >
+            Open drawer
+          </label>
+        </div>
+        <div className="drawer-side">
+          <label
+            htmlFor="my-drawer-2"
+            aria-label="close sidebar"
+            className="drawer-overlay"
+          ></label>
+          <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+            {/* Sidebar content here */}
+            <li>
+              <a>Sidebar Item 1</a>
+            </li>
+            <li>
+              <a>Sidebar Item 2</a>
+            </li>
+          </ul>
+        </div>
+      </div>
 
       {/* chat area  */}
       <div
@@ -50,7 +51,7 @@ export default function ChatBoard() {
           background: "rgba(255,255,255,0.4)",
           backdropFilter: "blur(8px)",
         }}
-        class="overflow-y-scroll rounded-lg shadow-xl border-[1px] border-gray-500 shadow-blue-500/50 h-[83vh] w-[70vw] p-2 pt-5"
+        class="rounded-lg shadow-xl border-2 border-gray-200 shadow-blue-500/50 h-[80vh] w-[70vw] p-2 pt-5"
       >
         {/* inital text by ai  */}
         <div className="chat chat-start">
@@ -70,7 +71,7 @@ export default function ChatBoard() {
       {/* button  */}
       <div
         onClick={() => document.getElementById("company_modal").showModal()}
-        className="fixed z-[100] bottom-[8vh] left-[43vw] border hover:bg-blue-600 bg-blue-500 w-[40vw] h-[7vh] shadow-blue-500 border-none shadow-lg flex items-center justify-center text-white font-bold rounded-lg cursor-pointer"
+        className="fixed z-[100] bottom-[10vh] left-[30vw] border hover:bg-blue-600 bg-blue-500 w-[40vw] h-[7vh] shadow-blue-500 border-none shadow-lg flex items-center justify-center text-white font-bold rounded-lg cursor-pointer"
       >
         Upload Document
       </div>

@@ -8,8 +8,8 @@
   --secondary-color: '#4C3BCF'
 }
 
-.menu a:active{
-  background-color: blue;
+.menu li > *:not(ul):not(.menu-title):not(details):active{
+  @apply bg-primary;
 }
 
 body {

@@ -3,6 +3,8 @@ import { UserLogedContext } from "../../context/UserLogedContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/CONTRACTIFY-1.png"
 import avtar from "../../assets/avtar.jpeg"
+import { LuArrowRightToLine } from "react-icons/lu";
+import { BiArrowToBottom } from "react-icons/bi";
 
 export default function Navbar() {
   // to chanck whether user login state changes or not
@@ -73,7 +75,7 @@ export default function Navbar() {
   const navLabels = ["Home", "How to use", "Help", "Documentation"];
 
   return (
-    <div className=" relative z-[1000] top-0 left-0 sm:h-[11.5vh] border-gray-300 border-b-2 rounded-lg  flex flex-row justify-between items-center px-[5vw] pt-1">
+    <div className=" relative z-[1000] top-0 left-0 sm:h-[11.5vh]  flex flex-row justify-between items-center px-[5vw] pt-1 border-gray-300 border-b-2">
       {/* logo division  */}
       <div className="h-[70%] sm:w-[15%]">
         <img style={{width: '100%', height: '100%'}} src={logo} alt='logo' />
@@ -85,31 +87,24 @@ export default function Navbar() {
       </div>
 
       {/* login button  or avtar */}
-      <div className="h-[100%] sm:w-[20%]  overflow-hidden flex items-center justify-end cursor-pointer">
+      <div className="h-[100%] sm:w-[20%] flex items-center justify-end cursor-pointer">
         {pathIncludesResult ? (
           <div
             onClick={toggleClick}
             onBlur={toggleClick}
-            className="dropdown dropdown-end flex flex-row gap-3 items-center"
+            className="dropdown dropdown-end flex flex-row gap-3 items-center border-[1px] rounded-md shadow-sm shadow-blue-500/50 border-gray-500 p-1"
           >
             <div class="avatar indicator">
-              <span class="indicator-item indicator-bottom badge badge-primary size-4"></span>
-              <div class="w-15 h-[55px] rounded-xl border-gray-300 border-2">
+              <div class="w-12 h-12 rounded-[50%] border-gray-500 border-[1px]">
                {!user.image ? <img src={avtar} /> : <img src={`${process.env.REACT_APP_BACKEND_IP}/${user.image}`} alt='user image' className="w-[100%] h-[100%]" /> }
               </div>
             </div>
-            <div>
-              <div className=" text-lg text-blue-500 drop-shadow-lg shadow-blue-500/50 truncate">{user.username} </div>
-              <div className="w-[80%] text-bold truncate">{user.email} </div>
+            <div className="w-[50%]">
+              <div className=" text-blue-500 truncate">{user.username} </div>
+              <div className=" truncate">{user.email} </div>
             </div>
-            <div id="rightarr" className="text-lg ">
-              {" "}
-              &#x27A4;{" "}
-            </div>
-            <div id="bottomarr" className="text-lg hidden">
-              {" "}
-              &#8659;{" "}
-            </div>
+            <LuArrowRightToLine size={20} id="rightarr" />
+            <BiArrowToBottom size={20} id="bottomarr" className="hidden" />
           </div>
         ) : (
           <button onClick={handleLoginClick} className="h-[70%] w-[50%] z-10 btn text-white bg-gradient-to-r from-cyan-500 to-blue-500 text-[1.2rem]">

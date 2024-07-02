@@ -104,10 +104,10 @@ export default function Login() {
               display: "flex",
               flexDirection: "column",
               gap: "10px",
-              height: "75vh",
+              height: "70vh",
               width: "40vw",
             }}
-            className="border-2 border-gray-200 shadow-lg shadow-blue-500/50 rounded-md items-center justify-center"
+            className=" items-center justify-center"
           >
             {loginSignupState === "signup" && (
               <div
@@ -256,11 +256,12 @@ export default function Login() {
         justifyContent: "center",
         paddingTop: "8vh",
       }}
-    >
+      >
       <div
         sx={{
           width: "30%",
         }}
+        className="border-[1px] p-2 border-gray-500 shadow-lg shadow-blue-500/50 flex flex-col rounded-md"
       >
         <button
               className="font-bold text-blue-500 hover:text-blue-600 hover:decoration-solid hover:underline"
