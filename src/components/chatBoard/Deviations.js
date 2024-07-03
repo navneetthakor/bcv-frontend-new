@@ -5,7 +5,7 @@ const Deviations = (props) => {
     console.log(result);
     return (
         <div>
-
+            
         </div>
     )
 }
