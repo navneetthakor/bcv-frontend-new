@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, version } from "react";
+import { json, useNavigate } from "react-router-dom";
 import { Sidebar, Deviations } from "../components/chatBoard/main";
 import Loader from "../components/common/Loader";
 
@@ -14,6 +14,12 @@ export default function ChatBoard() {
     ner_dic: "",
     compare_dic: "",
   };
+
+  const [settings, setSettings] = useState({
+    mode: "",
+    version: "",
+    url: "",
+  });
   const [result, setResult] = useState(dummyResult);
   const [resultStatus, setResultStatus] = useState("none");
   const [templates, setTemplates] = useState([]);
@@ -61,13 +67,12 @@ export default function ChatBoard() {
     document.getElementById("fileInputButton").click();
   };
 
-  // view history 
+  // view history
   const viewHistory = (data) => {
-
     extractUniqueEntities(data.ner_dic);
-      const newCompare = data.compare_dic?.filter((tuple) => {
-        return (tuple[1] && tuple[1].trim() !== "false");
-      });
+    const newCompare = data.compare_dic?.filter((tuple) => {
+      return tuple[1] && tuple[1].trim() !== "false";
+    });
 
     setResult(() => ({
       uploaded_pdf: data.uploaded_pdf,
@@ -79,7 +84,7 @@ export default function ChatBoard() {
 
     document.getElementById("modal2_close").click();
     setResultStatus("present");
-  }
+  };
 
   // function for other selected
   const handleSelectChange = (event) => {
@@ -123,11 +128,11 @@ export default function ChatBoard() {
         setResultStatus("none");
         return;
       }
-      if(resultStatus === "none") return;
+      if (resultStatus === "none") return;
 
       extractUniqueEntities(json.data.ner_dic);
       const newCompare = json.data.compare_dic?.filter((tuple) => {
-        return (tuple[1] && tuple[1].trim() !== "false");
+        return tuple[1] && tuple[1].trim() !== "false";
       });
       setResult(() => ({
         uploaded_pdf: json.data.uploaded_pdf,
@@ -229,6 +234,47 @@ export default function ChatBoard() {
       </div>
     </div>
   );
+
+  // for settings modal ---------------
+  // template select
+  const settingsTemplateSelect = (t) => {};
+
+  const settingsModeChange = (e) => {
+    setSettings(() => ({ ...settings, mode: e.target.value }));
+  };
+
+  const settingsVersion = (e) => {
+    setSettings(() => ({ ...settings, version: e.target.value }));
+  };
+
+  const handleTemplateSubmit = async() =>{
+    let url = `${process.env.REACT_APP_BACKEND_IP}/template/${settings.mode}`;
+    const body = {
+      version : settings.version,
+      url: settings.url
+    }
+    console.log(body);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        usertoken: localStorage.getItem("usertoken"),
+      },
+      body : JSON.stringify(body)
+    });
+    const data = await response.json();
+    console.log(data);
+
+    if (!data.success || data.signal === "red") {
+      alert("feild")
+    }
+
+  };
+
+  const newTemplateFile = (e) =>{
+    setSettings(() => ({ ...settings, url: e.target.value }));
+  }
+  
+
   // actual returning data ---------
   return (
     <div className="w-[100%] h-[88vh] flex justify-around relative z-1 pt-5 overflow-y-clip">
@@ -337,7 +383,10 @@ export default function ChatBoard() {
         <div className="modal-box flex flex-col">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
-            <button id="enter_company_name_close" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <button
+              id="enter_company_name_close"
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            >
               ✕
             </button>
           </form>
@@ -373,17 +422,69 @@ export default function ChatBoard() {
         </div>
       </dialog>
 
-     {/* modals  */}
+      {/* modals  */}
       {/* 1 */}
       <dialog id="my_modal_1" className="modal">
-        <div className="modal-box">
+        <div className="modal-box flex flex-col gap-2">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>
           </form>
-          
+          <h3 className="font-bold text-lg">Template Settings</h3>
+          <select
+            className="select select-primary w-full max-w-xs mt-4"
+            value={settings.mode}
+            onChange={settingsModeChange}
+          >
+            <option disabled value="">
+              Select Operations
+            </option>
+            <option value="add">Add</option>
+            <option value="remove">Remove</option>
+            <option value="update">Update</option>
+          </select>
+          {settings.mode === "add" && (
+            <input
+              id="tversion"
+              type="text"
+              onChange={settingsVersion}
+              placeholder="Type here"
+              className="input input-bordered w-full max-w-xs mt-2"
+            />
+          )}
+
+          {settings.mode && settings.mode !== "add" && (
+            <select
+              className="select select-primary w-full max-w-xs mt-4"
+              value={settings.version}
+              onChange={settingsTemplateSelect}
+            >
+              {templates.map((t) => {
+                return (
+                  <option value={t}>
+                    <a>{t.version}</a>
+                  </option>
+                );
+              })}
+            </select>
+          )}
+
+          {settings.mode && settings.mode !== "remove" && (
+            <input
+            onChange={newTemplateFile}
+            type="file"
+            accept="applications/pdf"
+            className="file-input file-input-bordered w-full max-w-xs" />
+          )}
+
+          <button
+            onClick={handleTemplateSubmit}
+            className="btn hover:bg-blue-600 bg-blue-500 shadow-blue-500 border-none shadow-lg text-white mt-4 w-[7vw]"
+          >
+            Submit
+          </button>
         </div>
       </dialog>
 
@@ -392,35 +493,33 @@ export default function ChatBoard() {
         <div className="modal-box">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
-            <button id="modal2_close" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <button
+              id="modal2_close"
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            >
               ✕
             </button>
           </form>
           <h3 className="font-bold">Your History</h3>
           <ul className="menu  bg-base-200 rounded-box w-[100%] mt-2">
-                  {company.map((cmp) => {
-                    return (
-                      <li>
-                        <details>
-                          <summary>{cmp.company}</summary>
-                          <ul>
-                            {cmp.data.map((dt) => {
-                              return (
-                                <li
-                                  onClick={() =>
-                                    viewHistory(dt)
-                                  }
-                                >
-                                  <a>version-{dt.version}</a>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </details>
-                      </li>
-                    );
-                  })}
- 
+            {company.map((cmp) => {
+              return (
+                <li>
+                  <details>
+                    <summary>{cmp.company}</summary>
+                    <ul>
+                      {cmp.data.map((dt) => {
+                        return (
+                          <li onClick={() => viewHistory(dt)}>
+                            <a>version-{dt.version}</a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </details>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </dialog>
