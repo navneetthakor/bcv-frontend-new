@@ -1,5 +1,5 @@
 import React, { useEffect, useState, version } from "react";
-import { json, useNavigate } from "react-router-dom";
+import { Form, json, useNavigate } from "react-router-dom";
 import { Sidebar, Deviations } from "../components/chatBoard/main";
 import Loader from "../components/common/Loader";
 
@@ -20,6 +20,7 @@ export default function ChatBoard() {
     version: "",
     url: "",
   });
+  const [settingsStatus, setSettingsStatus] = useState("none");
   const [result, setResult] = useState(dummyResult);
   const [resultStatus, setResultStatus] = useState("none");
   const [templates, setTemplates] = useState([]);
@@ -236,9 +237,6 @@ export default function ChatBoard() {
   );
 
   // for settings modal ---------------
-  // template select
-  const settingsTemplateSelect = (t) => {};
-
   const settingsModeChange = (e) => {
     setSettings(() => ({ ...settings, mode: e.target.value }));
   };
@@ -247,33 +245,59 @@ export default function ChatBoard() {
     setSettings(() => ({ ...settings, version: e.target.value }));
   };
 
-  const handleTemplateSubmit = async() =>{
+  const handleTemplateSubmit = async () => {
     let url = `${process.env.REACT_APP_BACKEND_IP}/template/${settings.mode}`;
-    const body = {
-      version : settings.version,
-      url: settings.url
+    setSettingsStatus("progress");
+    const formData = new FormData();
+    formData.append("url", settings.url);
+    formData.append("version", settings.version);
+    
+    console.log(formData);
+    const method =
+      settings.mode === "add"
+        ? "POST"
+        : settings.mode === "remove"
+        ? "DELETE"
+        : "PUT";
+    
+        let response;
+    if (settings.mode !== "remove") {
+       response = await fetch(url, {
+        method: method,
+        headers: {
+          usertoken: localStorage.getItem("usertoken"),
+        },
+        body: formData,
+      });
     }
-    console.log(body);
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        usertoken: localStorage.getItem("usertoken"),
-      },
-      body : JSON.stringify(body)
-    });
+    else{
+      console.log(settings.version);
+      response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          usertoken: localStorage.getItem("usertoken"),
+        },
+        body: JSON.stringify({version: settings.version}),
+      });
+    }
     const data = await response.json();
     console.log(data);
-
+    
     if (!data.success || data.signal === "red") {
-      alert("feild")
+      alert("feild");
+      console.log(data.error);
     }
-
+    else{
+      document.getElementById("settings_close").click();
+      loadTemplateAndCompanies();
+    }
+    setSettingsStatus("none");
   };
 
-  const newTemplateFile = (e) =>{
-    setSettings(() => ({ ...settings, url: e.target.value }));
-  }
-  
+  const newTemplateFile = (e) => {
+    setSettings(() => ({ ...settings, url: e.target.files[0] }));
+  };
 
   // actual returning data ---------
   return (
@@ -425,10 +449,11 @@ export default function ChatBoard() {
       {/* modals  */}
       {/* 1 */}
       <dialog id="my_modal_1" className="modal">
-        <div className="modal-box flex flex-col gap-2">
+        <div className="modal-box relative">
+          <div className="flex flex-col gap-2">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <button id="settings_close" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>
           </form>
@@ -459,11 +484,14 @@ export default function ChatBoard() {
             <select
               className="select select-primary w-full max-w-xs mt-4"
               value={settings.version}
-              onChange={settingsTemplateSelect}
+              onChange={settingsVersion}
             >
+              <option disabled value="">
+              Select Master Template
+            </option>
               {templates.map((t) => {
                 return (
-                  <option value={t}>
+                  <option value={t.version}>
                     <a>{t.version}</a>
                   </option>
                 );
@@ -473,10 +501,11 @@ export default function ChatBoard() {
 
           {settings.mode && settings.mode !== "remove" && (
             <input
-            onChange={newTemplateFile}
-            type="file"
-            accept="applications/pdf"
-            className="file-input file-input-bordered w-full max-w-xs" />
+              onChange={newTemplateFile}
+              type="file"
+              accept="applications/pdf"
+              className="file-input file-input-bordered w-full max-w-xs"
+            />
           )}
 
           <button
@@ -485,6 +514,12 @@ export default function ChatBoard() {
           >
             Submit
           </button>
+          </div>
+          {settingsStatus === "progress" && (
+            <div className="h-[100%] w-[100%] bg-white opacity-40 absolute top-0 left-0 flex justify-center items-center">
+              <span className="loading loading-dots loading-lg bg-blue-800"></span>
+            </div>
+          )}
         </div>
       </dialog>
 
