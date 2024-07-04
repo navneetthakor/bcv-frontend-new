@@ -18,10 +18,26 @@ export default function ChatBoard() {
   const [resultStatus, setResultStatus] = useState("none");
   const [templates, setTemplates] = useState([]);
   const [company, setCompany] = useState([]);
+  const [uniqueEntities, setUniqueEntities] = useState([]);
   const [uploadedData, setUpLoadedData] = useState({
     company: "",
     templateUrl: "",
   });
+
+  // parse ner
+  const extractUniqueEntities = (nerData) => {
+    const uniqueEntitiesSet = new Set();
+    const uniqueEntitiesList = [];
+
+    nerData.forEach((item) => {
+      if (item.value[0] !== "CARDINAL" && !uniqueEntitiesSet.has(item.key)) {
+        uniqueEntitiesSet.add(item.key);
+        uniqueEntitiesList.push(item);
+      }
+    });
+
+    setUniqueEntities(uniqueEntitiesList);
+  };
 
   // whene user selects template
   const handleTemplateSelect = (url) => {
@@ -37,9 +53,33 @@ export default function ChatBoard() {
   const handleCompanySelect = (url, companyName) => {
     document.getElementById("ctmodal").click();
 
-    setUpLoadedData({ ...uploadedData, templateUrl: url, company: companyName });
+    setUpLoadedData({
+      ...uploadedData,
+      templateUrl: url,
+      company: companyName,
+    });
     document.getElementById("fileInputButton").click();
   };
+
+  // view history 
+  const viewHistory = (data) => {
+
+    extractUniqueEntities(data.ner_dic);
+      const newCompare = data.compare_dic?.filter((tuple) => {
+        return (tuple[1] && tuple[1].trim() !== "false");
+      });
+
+    setResult(() => ({
+      uploaded_pdf: data.uploaded_pdf,
+      highlighted_pdf: data.highlighted_pdf,
+      summary: data.summary,
+      ner_dic: uniqueEntities,
+      compare_dic: newCompare,
+    }));
+
+    document.getElementById("modal2_close").click();
+    setResultStatus("present");
+  }
 
   // function for other selected
   const handleSelectChange = (event) => {
@@ -56,6 +96,7 @@ export default function ChatBoard() {
 
   // to fetch result
   const fetchResult = async (event) => {
+    document.getElementById("enter_company_name_close").click();
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append("url", file);
@@ -77,22 +118,27 @@ export default function ChatBoard() {
       const json = await response.json();
       console.log("data from django fetch is :", json);
 
-      if (!json.success && resultStatus === "none") {
+      if (!json.success) {
         alert("Failed");
         setResultStatus("none");
         return;
       }
+      if(resultStatus === "none") return;
 
+      extractUniqueEntities(json.data.ner_dic);
+      const newCompare = json.data.compare_dic?.filter((tuple) => {
+        return (tuple[1] && tuple[1].trim() !== "false");
+      });
       setResult(() => ({
         uploaded_pdf: json.data.uploaded_pdf,
         highlighted_pdf: json.data.highlighted_pdf,
         summary: json.data.summary,
-        ner_dic: json.data.ner_dic,
-        compare_dic: json.data.compare_dic,
+        ner_dic: uniqueEntities,
+        compare_dic: newCompare,
       }));
       console.log("result : ", result);
-      
-      setResultStatus("present")
+
+      setResultStatus("present");
     } catch (error) {
       console.error("Error during file upload:", error);
       alert("Failed");
@@ -152,15 +198,35 @@ export default function ChatBoard() {
   // various forms of main chat board -------------------
   // default state
   const ChatArea = (
-    <div className="chat-bubble bg-blue-500 text-white h-[5vh]">
-      Send me pdf so that, I can anaylys it!!!
+    <div className="chat chat-start">
+      <div className="chat-image avatar">
+        <div className="w-10 rounded-full">
+          <img
+            alt="Tailwind CSS chat bubble component"
+            src="https://cdn1.expresscomputer.in/wp-content/uploads/2023/04/04130957/EC_Artificial_Intelligence_AI_750.jpg"
+          />
+        </div>
+      </div>
+      <div className="chat-bubble bg-primary text-white">
+        Send me pdf to analys.
+      </div>
     </div>
   );
 
   // loading state
   const localLoader = (
-    <div className="chat-bubble bg-blue-500 text-white h-[5vh]">
-      <span className="loading loading-dots loading-lg bg-white"></span>
+    <div className="chat chat-start">
+      <div className="chat-image avatar">
+        <div className="w-10 rounded-full">
+          <img
+            alt="Tailwind CSS chat bubble component"
+            src="https://cdn1.expresscomputer.in/wp-content/uploads/2023/04/04130957/EC_Artificial_Intelligence_AI_750.jpg"
+          />
+        </div>
+      </div>
+      <div className="chat-bubble bg-primary text-white h-[5vh]">
+        <span className="loading loading-dots loading-lg bg-white"></span>
+      </div>
     </div>
   );
   // actual returning data ---------
@@ -178,29 +244,21 @@ export default function ChatBoard() {
         class="overflow-y-scroll rounded-lg shadow-xl border-[1px] border-gray-500 shadow-blue-500/50 h-[83vh] w-[70vw] p-2 pt-5"
       >
         {/* inital text by ai  */}
-        <div className="chat chat-start">
-          <div className="chat-image avatar">
-            <div className="w-10 rounded-full">
-              <img
-                alt="Tailwind CSS chat bubble component"
-                src="https://cdn1.expresscomputer.in/wp-content/uploads/2023/04/04130957/EC_Artificial_Intelligence_AI_750.jpg"
-              />
-            </div>
-          </div>
-          {resultStatus === "none" && ChatArea}
-          {resultStatus === "processing" && localLoader}
-        </div>
-          {resultStatus === "present" && <Deviations result={result} />}
-          {/* <Deviations result={result} /> */}
+
+        {resultStatus === "none" && ChatArea}
+        {resultStatus === "processing" && localLoader}
+        {resultStatus === "present" && <Deviations result={result} />}
       </div>
 
       {/* button  */}
-    {resultStatus === "none" &&  <div
-        onClick={() => document.getElementById("company_modal").showModal()}
-        className="fixed z-[100] bottom-[8vh] left-[43vw] border hover:bg-blue-600 bg-blue-500 w-[40vw] h-[7vh] shadow-blue-500 border-none shadow-lg flex items-center justify-center text-white font-bold rounded-lg cursor-pointer"
-      >
-        Upload Document
-      </div>}
+      {resultStatus === "none" && (
+        <div
+          onClick={() => document.getElementById("company_modal").showModal()}
+          className="fixed z-[100] bottom-[8vh] left-[43vw] border hover:bg-blue-600 bg-blue-500 w-[40vw] h-[7vh] shadow-blue-500 border-none shadow-lg flex items-center justify-center text-white font-bold rounded-lg cursor-pointer"
+        >
+          Upload Document
+        </div>
+      )}
 
       {/* regarding input fild  */}
       <input
@@ -250,7 +308,14 @@ export default function ChatBoard() {
                           <ul>
                             {cmp.data.map((dt) => {
                               return (
-                                <li onClick={() => handleCompanySelect(dt.uploaded_pdf, cmp.company)}>
+                                <li
+                                  onClick={() =>
+                                    handleCompanySelect(
+                                      dt.uploaded_pdf,
+                                      cmp.company
+                                    )
+                                  }
+                                >
                                   <a>version-{dt.version}</a>
                                 </li>
                               );
@@ -272,7 +337,7 @@ export default function ChatBoard() {
         <div className="modal-box flex flex-col">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <button id="enter_company_name_close" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>
           </form>
@@ -305,6 +370,58 @@ export default function ChatBoard() {
           >
             Submit
           </button>
+        </div>
+      </dialog>
+
+     {/* modals  */}
+      {/* 1 */}
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          
+        </div>
+      </dialog>
+
+      {/* 2 */}
+      <dialog id="my_modal_2" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button id="modal2_close" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold">Your History</h3>
+          <ul className="menu  bg-base-200 rounded-box w-[100%] mt-2">
+                  {company.map((cmp) => {
+                    return (
+                      <li>
+                        <details>
+                          <summary>{cmp.company}</summary>
+                          <ul>
+                            {cmp.data.map((dt) => {
+                              return (
+                                <li
+                                  onClick={() =>
+                                    viewHistory(dt)
+                                  }
+                                >
+                                  <a>version-{dt.version}</a>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </details>
+                      </li>
+                    );
+                  })}
+ 
+          </ul>
         </div>
       </dialog>
     </div>
