@@ -77,19 +77,20 @@ export default function ChatBoard() {
       const json = await response.json();
       console.log("data from django fetch is :", json);
 
-      if (!json.success) {
+      if (!json.success && resultStatus === "none") {
         alert("Failed");
         setResultStatus("none");
         return;
       }
 
-      setResult({
+      setResult(() => ({
         uploaded_pdf: json.data.uploaded_pdf,
         highlighted_pdf: json.data.highlighted_pdf,
         summary: json.data.summary,
         ner_dic: json.data.ner_dic,
         compare_dic: json.data.compare_dic,
-      })
+      }));
+      console.log("result : ", result);
       
       setResultStatus("present")
     } catch (error) {
@@ -166,7 +167,7 @@ export default function ChatBoard() {
   return (
     <div className="w-[100%] h-[88vh] flex justify-around relative z-1 pt-5 overflow-y-clip">
       {/* sidebar */}
-      <Sidebar />
+      <Sidebar setResultStatus={setResultStatus} />
 
       {/* chat area  */}
       <div
@@ -188,17 +189,18 @@ export default function ChatBoard() {
           </div>
           {resultStatus === "none" && ChatArea}
           {resultStatus === "processing" && localLoader}
-          {resultStatus === "present" && <Deviations result={result} />}
         </div>
+          {resultStatus === "present" && <Deviations result={result} />}
+          {/* <Deviations result={result} /> */}
       </div>
 
       {/* button  */}
-      <div
+    {resultStatus === "none" &&  <div
         onClick={() => document.getElementById("company_modal").showModal()}
         className="fixed z-[100] bottom-[8vh] left-[43vw] border hover:bg-blue-600 bg-blue-500 w-[40vw] h-[7vh] shadow-blue-500 border-none shadow-lg flex items-center justify-center text-white font-bold rounded-lg cursor-pointer"
       >
         Upload Document
-      </div>
+      </div>}
 
       {/* regarding input fild  */}
       <input
@@ -248,7 +250,7 @@ export default function ChatBoard() {
                           <ul>
                             {cmp.data.map((dt) => {
                               return (
-                                <li onClick={() => handleCompanySelect(dt.url, cmp.company)}>
+                                <li onClick={() => handleCompanySelect(dt.uploaded_pdf, cmp.company)}>
                                   <a>version-{dt.version}</a>
                                 </li>
                               );

@@ -15,8 +15,6 @@ export default function RootLayout() {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        position: 'relative',
-        zIndex: -1,
       }}
     >
       <div style={{ position: 'relative', zIndex: 1 }}>
